@@ -1,5 +1,8 @@
+PREFIX ?= /usr/local
+LIBDIR ?= /lib
+
 clientbuffer.so : clientbuffer.cpp
 	znc-buildmod clientbuffer.cpp
 
 install: clientbuffer.so
-	install clientbuffer.so /usr/lib/znc/
+	install -Dm 755 clientbuffer.so $(DESTDIR)$(PREFIX)$(LIBDIR)/znc/clientbuffer.so
