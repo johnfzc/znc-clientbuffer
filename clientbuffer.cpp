@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014-2015 J-P Nurmi
- * Copyright (C) 2017-2018 Vladimir Panteleev and contributors
+ * Copyright (C) 2017-2018, 2021 Vladimir Panteleev and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -223,6 +223,10 @@ void CClientBufferMod::OnClientLogin()
     const CString& current = GetClient()->GetIdentifier();
 
     if (!HasClient(current) && m_bAutoAdd) {
+        if (current.length() == 0) {
+            PutModule("Not auto-adding a client with an empty identifier.");
+            return;
+        }
         AddClient(current);
     }
 }
