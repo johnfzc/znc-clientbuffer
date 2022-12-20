@@ -391,7 +391,9 @@ CModule::EModRet CClientBufferMod::OnChanBufferPlayMessage(CMessage& Message)
     }
 
     char timestamp[128];
-    std::snprintf(timestamp, 128, "*** offline self message debug *** Message time %lld.%06ld", (long long)Message.GetTime().tv_sec, (long)Message.GetTime().tv_usec);
+    timeval tv;
+    gettimeofday(&tv, NULL);
+    std::snprintf(timestamp, 128, "*** offline self message debug *** Message time %lld.%06ld current time %lld.%06ld", (long long)Message.GetTime().tv_sec, (long)Message.GetTime().tv_usec,(long long)tv.tv_sec, (long)tv.tv_usec);
     DEBUG(timestamp);
 
     if (HasSeenTimestamp(identifier, GetTarget(Message), Message.GetTime())) {
@@ -575,7 +577,10 @@ timeval CClientBufferMod::GetTimestamp(const CBuffer& buffer) const
 /// Set the "last seen" timestamp for a given client identifier and target.
 bool CClientBufferMod::SetTimestamp(const CString& identifier, const CString& target, const timeval& tv)
 {
-    char timestamp[32];
+    char timestamp[128];
+    std::snprintf(timestamp, 128, "*** offline self message debug *** SetTimestamp %lld.%06ld", (long long)tv.tv_sec, (long)tv.tv_usec);
+    DEBUG(timestamp);
+
     std::snprintf(timestamp, 32, "%lld.%06ld", (long long)tv.tv_sec, (long)tv.tv_usec);
     m_bDirty = true;
     return SetNV(identifier + "/" + target, timestamp, false);
@@ -585,7 +590,13 @@ bool CClientBufferMod::SetTimestamp(const CString& identifier, const CString& ta
 /// seen" timestamp for the given client identifier and target.
 bool CClientBufferMod::HasSeenTimestamp(const CString& identifier, const CString& target, const timeval& tv)
 {
+
     const timeval seen = GetTimestamp(identifier, target);
+
+    char timestamp[128];
+    std::snprintf(timestamp, 128, "*** offline self message debug *** seen timestamp is %lld.%06ld", (long long)seen.tv_sec, (long)seen.tv_usec);
+    DEBUG(timestamp);
+
     return !timercmp(&seen, &tv, <);
 }
 
@@ -596,8 +607,9 @@ bool CClientBufferMod::HasSeenTimestamp(const CString& identifier, const CString
 /// and returns true. Otherwise, returns false.
 bool CClientBufferMod::UpdateTimestamp(const CString& identifier, const CString& target, const timeval& tv)
 {
-    if (!HasSeenTimestamp(identifier, target, tv))
+    if (!HasSeenTimestamp(identifier, target, tv)) {
         return SetTimestamp(identifier, target, tv);
+    }
     return false;
 }
 
