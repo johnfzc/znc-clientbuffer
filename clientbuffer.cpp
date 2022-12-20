@@ -372,6 +372,7 @@ CModule::EModRet CClientBufferMod::OnChanBufferPlayMessage(CMessage& Message)
     DEBUG("*** offline self message debug *** OnChanBufferPlayMessage with message" + Message.ToString());
     DEBUG("*** offline self message debug *** still in OnChanBufferPlayMessage");
     CClient* client = Message.GetClient();
+    DEBUG("*** offline self message debug *** OnChanBufferPlayMessage post GetClient");
     if (!client)
         DEBUG("*** offline self message debug *** !client");
         return CONTINUE;
