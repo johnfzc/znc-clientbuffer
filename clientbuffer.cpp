@@ -257,6 +257,7 @@ CModule::EModRet CClientBufferMod::OnUserRawMessage(CMessage& Message)
         return CONTINUE;
 
     if (WantMessageType(Message.GetType()))
+        DEBUG("*** offline self message debug *** Updating timestamp for " + client->GetIdentifier());
         UpdateTimestamp(client->GetIdentifier(), GetTarget(Message), Message.GetTime());
 
     return CONTINUE;
@@ -368,20 +369,28 @@ CModule::EModRet CClientBufferMod::OnChanBufferEnding(CChan& chan, CClient& clie
 #if ZNC17
 CModule::EModRet CClientBufferMod::OnChanBufferPlayMessage(CMessage& Message)
 {
+    DEBUG("*** offline self message debug *** OnChanBufferPlayMessage with message" + Message.ToString());
+    DEBUG("*** offline self message debug *** still in OnChanBufferPlayMessage");
     CClient* client = Message.GetClient();
     if (!client)
+        DEBUG("*** offline self message debug *** !client");
         return CONTINUE;
 
+    DEBUG("*** offline self message debug *** OnChanBufferPlayMessage after !client");
     const CString& identifier = client->GetIdentifier();
     if (!HasClient(identifier))
+        DEBUG("*** offline self message debug *** HasClient(identifier)");
         return HALTCORE;
 
     if (!WithinTimeLimit(Message.GetTime(), identifier))
+        DEBUG("*** offline self message debug *** !WithinTimeLimit");
 	    return HALTCORE;
 
     if (HasSeenTimestamp(identifier, GetTarget(Message), Message.GetTime()))
+        DEBUG("*** offline self message debug *** HasSeenTimestamp");
         return HALTCORE;
 
+    DEBUG("*** offline self message debug *** Bare CONTINUE");
     return CONTINUE;
 }
 #else
