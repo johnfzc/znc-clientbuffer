@@ -377,7 +377,6 @@ CModule::EModRet CClientBufferMod::OnChanBufferPlayMessage(CMessage& Message)
         return CONTINUE;
     }
 
-    DEBUG("*** offline self message debug *** OnChanBufferPlayMessage after !client");
     const CString& identifier = client->GetIdentifier();
     if (!HasClient(identifier)) {
         DEBUG("*** offline self message debug *** HasClient(identifier)");
@@ -390,6 +389,10 @@ CModule::EModRet CClientBufferMod::OnChanBufferPlayMessage(CMessage& Message)
         DEBUG("*** offline self message debug *** !WithinTimeLimit");
 	    return HALTCORE;
     }
+
+    char timestamp[128];
+    std::snprintf(timestamp, 128, "*** offline self message debug *** Message time %lld.%06ld", (long long)Message.GetTime().tv_sec, (long)Message.GetTime().tv_usec);
+    DEBUG(timestamp);
 
     if (HasSeenTimestamp(identifier, GetTarget(Message), Message.GetTime())) {
         DEBUG("*** offline self message debug *** HasSeenTimestamp");
